@@ -1,16 +1,14 @@
 package in.hp.boot.models;
 
-/**
- * Copied the model from Rating data service,
- * To create an object while unmarshalling in RestTemplate
- * @author Hariprasath
- *
- */
 public class Rating {
 	
 	private String movieId;
 	private int rating;
 	
+	public Rating() {
+		super();
+	}
+
 	public Rating(String movieId, int rating) {
 		super();
 		this.movieId = movieId;
