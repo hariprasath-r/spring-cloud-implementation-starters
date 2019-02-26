@@ -1,0 +1,12 @@
+server:
+  port: ${PORT:8761}
+  
+# The below properties
+#  eureka.client.registerWithEureka and eureka.client.fetchRegistry are set to false due to "Connection Refused" exception
+#  Refer this link: https://dzone.com/articles/using-netflix-eureka-with-spring-cloudspring-boot
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+      waitTimeInMsWhenSyncEmpty: 0
