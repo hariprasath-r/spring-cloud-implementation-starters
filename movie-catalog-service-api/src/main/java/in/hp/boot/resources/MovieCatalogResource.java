@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,12 @@ public class MovieCatalogResource {
 	 */
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	/*
+	 * We can use DiscoveryClient interface to provide load balancing as well
+	@Autowired
+	private DiscoveryClient discoveryClient;
+	*/
 	
 	/**
 	 * How to use WebClient to make Rest calls
@@ -55,12 +62,13 @@ public class MovieCatalogResource {
 	public List<CatalogItem> getCatalog(@PathVariable String userId) {
 
 		// Step 1
-		UserRating userRating= restTemplate.getForObject("http://localhost:8083/ratingsdata/users/" + userId, UserRating.class);
+		// Using spring-application-names instead of localhost:port, making use of eureka
+		UserRating userRating= restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
 
 		// Step 2
 		List<CatalogItem> returnList = new ArrayList<>();
 		userRating.getUserRatings().stream().forEach(rating -> {
-			Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
+			Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
 			// Step 3
 			returnList.add(new CatalogItem(movie.getName(), "Description", rating.getRating()));
 		});

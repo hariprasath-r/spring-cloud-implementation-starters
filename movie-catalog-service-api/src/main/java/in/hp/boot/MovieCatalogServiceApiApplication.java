@@ -2,6 +2,7 @@ package in.hp.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
@@ -19,9 +20,14 @@ public class MovieCatalogServiceApiApplication {
 	/**
 	 * The @Bean annotation is used to make this particular method singleton
 	 * The return type of this method can be autowired
+	 * 
+	 * @LoadBalanced Annotation provides client side load balancing using Eureka server
+	 * 	All we have to do is annotate while getting RestTemplate and pass in the application name mentioned in
+	 * 	application.yml file and the RestTemplate takes care of everything
 	 * @return
 	 */
 	@Bean
+	@LoadBalanced
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
 	}
