@@ -2,6 +2,7 @@ package in.hp.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -11,8 +12,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 /**
  * The @EnableEurekaClient is an optional annotation, before it was mandate.
  * 
- * @EnableDiscoveryClient annotation will work seemlessly if the eureka discovery
+ * @EnableDiscoveryClient annotation will work seamlessly if the eureka discovery
  * is replaced with some other discovery client
+ *
+ * @EnableCircuitBreaker annotation will add spring cloud circuit breaker to the service
  * 
  * @author Hariprasath
  *
@@ -20,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootApplication
 //@EnableEurekaClient
 @EnableDiscoveryClient
+@EnableCircuitBreaker
 public class MovieCatalogServiceApiApplication {
 
 	/**

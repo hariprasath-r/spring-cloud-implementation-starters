@@ -1,5 +1,6 @@
 package in.hp.boot.resources;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import in.hp.boot.models.CatalogItem;
 import in.hp.boot.models.Movie;
@@ -58,6 +61,7 @@ public class MovieCatalogResource {
 	 * @return
 	 */
 	@RequestMapping("/{userId}")
+	@HystrixCommand(fallbackMethod = "getFallBackCatalog")
 	public List<CatalogItem> getCatalog(@PathVariable String userId) {
 
 		// Step 1
@@ -102,5 +106,14 @@ public class MovieCatalogResource {
 		})
 		.collect(Collectors.toList());
 		*/
+	}
+	
+	/**
+	 * Fallback method, which will be called when circuit is broken
+	 * @param userId
+	 * @return
+	 */
+	public List<CatalogItem> getFallBackCatalog(@PathVariable String userId) {
+		return Arrays.asList(new CatalogItem("No Movie", "-", -1));
 	}
 }
