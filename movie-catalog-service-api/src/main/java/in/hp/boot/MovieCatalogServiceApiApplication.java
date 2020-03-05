@@ -2,20 +2,24 @@ package in.hp.boot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The @EnableEurekaClient is an optional annotation, before it was mandate.
+ * 
+ * @EnableDiscoveryClient annotation will work seemlessly if the eureka discovery
+ * is replaced with some other discovery client
+ * 
  * @author Hariprasath
  *
  */
 @SpringBootApplication
-@EnableEurekaClient
+//@EnableEurekaClient
+@EnableDiscoveryClient
 public class MovieCatalogServiceApiApplication {
 
 	/**
@@ -36,9 +40,15 @@ public class MovieCatalogServiceApiApplication {
 	@Bean
 	@LoadBalanced
 	public RestTemplate getRestTemplate() {
+		return new RestTemplate();
+		
+		/*
+		 * Adding Connection Timeout
+		 * 
 		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		clientHttpRequestFactory.setConnectTimeout(2000);
 		return new RestTemplate(clientHttpRequestFactory);
+		*/
 	}
 	
 	/**

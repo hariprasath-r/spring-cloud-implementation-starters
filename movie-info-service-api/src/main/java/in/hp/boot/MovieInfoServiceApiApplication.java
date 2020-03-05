@@ -17,9 +17,15 @@ public class MovieInfoServiceApiApplication {
 	
 	@Bean
 	public RestTemplate getRestTemplate() {
+		return new RestTemplate();
+		
+		/*
+		 * Adding Connection Timeout
+		 * 
 		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		clientHttpRequestFactory.setConnectTimeout(2000);
 		return new RestTemplate(clientHttpRequestFactory);
+		*/
 	}
 
 }

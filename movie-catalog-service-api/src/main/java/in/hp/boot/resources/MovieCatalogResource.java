@@ -1,7 +1,7 @@
 package in.hp.boot.resources;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,11 +62,19 @@ public class MovieCatalogResource {
 
 		// Step 1
 		// Using spring-application-names instead of localhost:port, making use of eureka
-		UserRating userRating= restTemplate
-				.getForObject("http://ratings-data-service/ratingsdata/users/" + userId,
-						UserRating.class);
+		UserRating userRating= restTemplate.getForObject(
+				"http://ratings-data-service/ratingsdata/users/" + userId,
+				UserRating.class);
 
 		// Step 2
+		return userRating.getUserRatings().stream().map(rating -> {
+			Movie movie = restTemplate.getForObject(
+					"http://movie-info-service/movies/" + rating.getMovieId(),
+					Movie.class);
+			return new CatalogItem(movie.getName(), movie.getDescription(), rating.getRating());
+		}).collect(Collectors.toList());
+		
+		/*
 		List<CatalogItem> returnList = new ArrayList<>();
 		userRating.getUserRatings().stream().forEach(rating -> {
 			Movie movie = restTemplate
@@ -79,8 +87,8 @@ public class MovieCatalogResource {
 					rating.getRating()
 					));
 		});
-		
 		return returnList;
+		*/
 		
 		/*
 		 * TODO learn what is Collections.singletonList means
