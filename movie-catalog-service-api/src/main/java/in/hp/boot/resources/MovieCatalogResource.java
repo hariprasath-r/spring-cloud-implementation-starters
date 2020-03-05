@@ -62,14 +62,22 @@ public class MovieCatalogResource {
 
 		// Step 1
 		// Using spring-application-names instead of localhost:port, making use of eureka
-		UserRating userRating= restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
+		UserRating userRating= restTemplate
+				.getForObject("http://ratings-data-service/ratingsdata/users/" + userId,
+						UserRating.class);
 
 		// Step 2
 		List<CatalogItem> returnList = new ArrayList<>();
 		userRating.getUserRatings().stream().forEach(rating -> {
-			Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
+			Movie movie = restTemplate
+					.getForObject("http://movie-info-service/movies/" + rating.getMovieId(),
+							Movie.class);
 			// Step 3
-			returnList.add(new CatalogItem(movie.getName(), "Description", rating.getRating()));
+			returnList.add(new CatalogItem(
+					movie.getName(),
+					movie.getDescription(), 
+					rating.getRating()
+					));
 		});
 		
 		return returnList;
