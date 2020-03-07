@@ -53,6 +53,7 @@ public class MovieCatalogResource {
 					.bodyToMono(Movie.class)
 					.block();
 	*/
+	
 	/**
 	 * 1. Get all rated movies for a supplied userId
 	 * 2. For each movie ID, call movie info service and get details
@@ -64,48 +65,16 @@ public class MovieCatalogResource {
 	@HystrixCommand(fallbackMethod = "getFallBackCatalog")
 	public List<CatalogItem> getCatalog(@PathVariable String userId) {
 
-		// Step 1
-		// Using spring-application-names instead of localhost:port, making use of eureka
 		UserRating userRating= restTemplate.getForObject(
 				"http://ratings-data-service/ratingsdata/users/" + userId,
 				UserRating.class);
 
-		// Step 2
 		return userRating.getUserRatings().stream().map(rating -> {
 			Movie movie = restTemplate.getForObject(
 					"http://movie-info-service/movies/" + rating.getMovieId(),
 					Movie.class);
 			return new CatalogItem(movie.getName(), movie.getDescription(), rating.getRating());
 		}).collect(Collectors.toList());
-		
-		/*
-		List<CatalogItem> returnList = new ArrayList<>();
-		userRating.getUserRatings().stream().forEach(rating -> {
-			Movie movie = restTemplate
-					.getForObject("http://movie-info-service/movies/" + rating.getMovieId(),
-							Movie.class);
-			// Step 3
-			returnList.add(new CatalogItem(
-					movie.getName(),
-					movie.getDescription(), 
-					rating.getRating()
-					));
-		});
-		return returnList;
-		*/
-		
-		/*
-		 * TODO learn what is Collections.singletonList means
-		return Collections.singletonList(
-				new CatalogItem("Iron Man", "Marvel's first movie", 9)
-				);
-		 * TODO - Map is not working, learn lambda and check
-		return ratings.stream().map(rating -> {
-			Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
-			new CatalogItem(movie.getName(), "Description", rating.getRating());	
-		})
-		.collect(Collectors.toList());
-		*/
 	}
 	
 	/**
