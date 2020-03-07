@@ -42,6 +42,9 @@ public class MovieInfoService {
 					@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
 					@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
 					@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000")
+			}, threadPoolKey = "movieInfoPool", threadPoolProperties = {
+					@HystrixProperty(name = "coreSize", value = "5"),
+					@HystrixProperty(name = "maxQueueSize", value = "5")
 			})
 	public CatalogItem getCatalogItem(Rating rating) {
 		Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);

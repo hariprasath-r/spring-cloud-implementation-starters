@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import in.hp.boot.models.Rating;
 import in.hp.boot.models.UserRating;
@@ -18,7 +19,24 @@ public class RatingDataService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@HystrixCommand(fallbackMethod = "getFallbackUserRating")
+	/**
+	 * @since 07-MAR-20
+	 * 
+	 * Thread pool configuration to implement bulk head design pattern
+	 * Having reserved thread pool size for each service calls
+	 * 
+	 * coreSize - size of thread pool
+	 * maxQueueSize - maximum requests / threads to hold in wait queue
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	@HystrixCommand(fallbackMethod = "getFallbackUserRating", threadPoolKey = "ratingDataPool",
+				threadPoolProperties = {
+						@HystrixProperty(name = "coreSize", value = "5"),
+						@HystrixProperty(name = "maxQueueSize", value = "5")
+				}
+			)
 	public UserRating getUserRating(String userId) {
 		return restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
 	}
