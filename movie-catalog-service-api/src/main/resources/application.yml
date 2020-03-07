@@ -6,14 +6,8 @@ server:
   port: 8084
   
 management:
-  endpoint:
-    shutdown:
-      enabled: true
-  server:
-    port: 8085
   endpoints:
     web:
-      base-path: /
       exposure:
         include: "*"
 #        include: hystrix.stream
