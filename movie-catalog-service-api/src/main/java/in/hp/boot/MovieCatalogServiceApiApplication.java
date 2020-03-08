@@ -4,17 +4,25 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The @EnableEurekaClient is an optional annotation, before it was mandate.
+ * 
+ * @EnableDiscoveryClient annotation will work seamlessly if the eureka discovery
+ * is replaced with some other discovery client
+ *
+ * @EnableCircuitBreaker annotation will add spring cloud circuit breaker to the service
+ * 
  * @author Hariprasath
  *
  */
 @SpringBootApplication
 @EnableEurekaClient
+@EnableHystrix
 public class MovieCatalogServiceApiApplication {
 
 	/**
@@ -24,12 +32,26 @@ public class MovieCatalogServiceApiApplication {
 	 * @LoadBalanced Annotation provides client side load balancing using Eureka server
 	 * 	All we have to do is annotate while getting RestTemplate and pass in the application name mentioned in
 	 * 	application.yml file and the RestTemplate takes care of everything
+	 * 
+	 * The parameter clientHttpRequestFactory is used to timeout the external api call after that interval
+	 * We need timeout so that the thread will not wait for a long time
+	 * 
+	 * Better approach is using circuit breakers
+	 * 
 	 * @return
 	 */
 	@Bean
 	@LoadBalanced
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
+		
+		/*
+		 * Adding Connection Timeout
+		 * 
+		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		clientHttpRequestFactory.setConnectTimeout(2000);
+		return new RestTemplate(clientHttpRequestFactory);
+		*/
 	}
 	
 	/**
