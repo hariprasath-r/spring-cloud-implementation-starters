@@ -14,6 +14,11 @@ import in.hp.boot.models.MovieSummary;
 @RequestMapping("/movies")
 public class MovieResource {
 	
+	/**
+	 * The @Value annotation allows us to fetch / resolve the value from a property file at runtime
+	 * the syntax ${} is used to dynamically assign the value resolved to the member variable
+	 * api.key is the key in application.yml / application.properties file
+	 */
 	@Value("${api.key}")
 	private String apiKey;
 	
